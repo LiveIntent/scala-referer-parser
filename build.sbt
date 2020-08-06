@@ -1,5 +1,5 @@
 /**
- * Copyright 2012-2019 Snowplow Analytics Ltd
+ * Copyright 2012-2020 Snowplow Analytics Ltd
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@ val root = (project in file(".")).
   settings(
     name := "scala-referer-parser",
     organization := "com.snowplowanalytics",
-    version := "1.0.0",
+    version := "1.0.1-liveintent",
     description := "Library for extracting marketing attribution data from referer URLs",
     scalaVersion := "2.13.3",
     crossScalaVersions := Seq("2.11.12", "2.12.8", "2.13.3"),

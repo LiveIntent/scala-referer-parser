@@ -1,5 +1,5 @@
 /**
- * Copyright 2012-2019 Snowplow Analytics Ltd
+ * Copyright 2012-2020 Snowplow Analytics Ltd
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,10 +18,6 @@
 import sbt._
 import Keys._
 
-// Bintray
-import bintray.BintrayPlugin._
-import bintray.BintrayKeys._
-
 //Scaladocs
 import sbtunidoc.ScalaUnidocPlugin.autoImport._
 import com.typesafe.sbt.site.SitePlugin.autoImport._
@@ -30,6 +26,8 @@ import com.typesafe.sbt.SbtGit.GitKeys._
 // Scoverage
 import scoverage.ScoverageKeys._
 
+import java.util.Date
+
 object BuildSettings {
 
   lazy val javaCompilerOptions = Seq(
@@ -37,13 +35,23 @@ object BuildSettings {
     "-target", "1.8"
 )
 
-  lazy val publishSettings = bintraySettings ++ Seq(
+  private val artifactoryHost = "liveintent.jfrog.io"
+  val snapshotsRepo = settingKey[Resolver]("LiveIntent Snapshots Repository")
+  val releasesRepo = settingKey[Resolver]("LiveIntent Releases Repository")
+
+  lazy val publishSettings = Seq(
+    snapshotsRepo := "Artifactory Realm" at s"https://$artifactoryHost/liveintent/berlin;build.timestamp=${new Date().getTime}",
+    releasesRepo := "Artifactory Realm" at s"https://$artifactoryHost/liveintent/berlin",
+    publishTo := {
+      if (isSnapshot.value) Some(snapshotsRepo.value)
+      else Some(releasesRepo.value)
+    },
+    resolvers += "Artifactory" at s"https://$artifactoryHost/liveintent/berlin/",
+
     publishMavenStyle := true,
 	publishArtifact := true,
 	publishArtifact in Test := false,
 	licenses += ("Apache-2.0", url("http://www.apache.org/licenses/LICENSE-2.0.html")),
-	bintrayOrganization := Some("snowplow"),
-	bintrayRepository := "snowplow-maven",
 	pomIncludeRepository := { _ => false },
 	homepage := Some(url("http://snowplowanalytics.com")),
 	scmInfo := Some(ScmInfo(url("https://github.com/snowplow-referer-parser/scala-referer-parser"),
