@@ -40,13 +40,13 @@ object BuildSettings {
   val releasesRepo = settingKey[Resolver]("LiveIntent Releases Repository")
 
   lazy val publishSettings = Seq(
-    snapshotsRepo := "Artifactory Realm" at s"https://$artifactoryHost/liveintent/berlin;build.timestamp=${new Date().getTime}",
-    releasesRepo := "Artifactory Realm" at s"https://$artifactoryHost/liveintent/berlin",
+    snapshotsRepo := "Artifactory Realm" at s"https://$artifactoryHost/liveintent/sbt;build.timestamp=${new Date().getTime}",
+    releasesRepo := "Artifactory Realm" at s"https://$artifactoryHost/liveintent/sbt",
     publishTo := {
       if (isSnapshot.value) Some(snapshotsRepo.value)
       else Some(releasesRepo.value)
     },
-    resolvers += "Artifactory" at s"https://$artifactoryHost/liveintent/berlin/",
+    resolvers += "Artifactory" at s"https://$artifactoryHost/liveintent/sbt",
 
     publishMavenStyle := true,
 	publishArtifact := true,
