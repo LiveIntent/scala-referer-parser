@@ -17,14 +17,12 @@
 import sbt._
 import Keys._
 
-// Bintray
-import bintray.BintrayPlugin._
-import bintray.BintrayKeys._
-
 //Scaladocs
 import sbtunidoc.ScalaUnidocPlugin.autoImport._
 import com.typesafe.sbt.site.SitePlugin.autoImport._
 import com.typesafe.sbt.SbtGit.GitKeys._
+
+import java.util.Date
 
 // Scoverage
 import scoverage.ScoverageKeys._
@@ -38,13 +36,13 @@ object BuildSettings {
     "1.8"
   )
 
-  lazy val publishSettings = bintraySettings ++ Seq(
+  lazy val publishSettings = Seq(
+    publishTo := Some("Artifactory Realm" at s"https://liveintent.jfrog.io/liveintent/sbt",
+    credentials += Credentials("Artifactory Realm", "liveintent.jfrog.io", "user", "password"),
     publishMavenStyle := true,
     publishArtifact := true,
     publishArtifact in Test := false,
     licenses += ("Apache-2.0", url("http://www.apache.org/licenses/LICENSE-2.0.html")),
-    bintrayOrganization := Some("snowplow"),
-    bintrayRepository := "snowplow-maven",
     pomIncludeRepository := { _ => false },
     homepage := Some(url("http://snowplowanalytics.com")),
     scmInfo := Some(
