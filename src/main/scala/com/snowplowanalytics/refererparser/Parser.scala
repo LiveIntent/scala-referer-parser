@@ -27,6 +27,8 @@ import scala.collection.compat.immutable.LazyList
 
 trait CreateParser[F[_]] {
   def create(filePath: String): F[Either[Exception, Parser]]
+
+  def createFromConfig(jsonContent: String): F[Either[Exception, Parser]]
 }
 
 object CreateParser {
@@ -38,6 +40,11 @@ object CreateParser {
         Sync[F]
           .delay(Source.fromFile(filePath).mkString)
           .map(rawJson => ParseReferers.loadJsonFromString(rawJson).map(referers => new Parser(referers)))
+
+      def createFromConfig(jsonContent: String): F[Either[Exception, Parser]] =
+        Sync[F]
+          .pure(jsonContent)
+          .map(rawJson => ParseReferers.loadJsonFromString(rawJson).map(referers => new Parser(referers)))
     }
 
   implicit def evalCreateParser: CreateParser[Eval] =
@@ -45,6 +52,11 @@ object CreateParser {
       def create(filePath: String): Eval[Either[Exception, Parser]] =
         Eval
           .later(Source.fromFile(filePath).mkString)
+          .map(rawJson => ParseReferers.loadJsonFromString(rawJson).map(referers => new Parser(referers)))
+
+      def createFromConfig(jsonContent: String): Eval[Either[Exception, Parser]] =
+        Eval
+          .now(jsonContent)
           .map(rawJson => ParseReferers.loadJsonFromString(rawJson).map(referers => new Parser(referers)))
     }
 
@@ -54,6 +66,9 @@ object CreateParser {
         val rawJson = Source.fromFile(filePath).mkString
         ParseReferers.loadJsonFromString(rawJson).map(referers => new Parser(referers))
       }
+
+      def createFromConfig(jsonContent: String): Id[Either[Exception, Parser]] =
+        ParseReferers.loadJsonFromString(jsonContent).map(referers => new Parser(referers))
     }
 }
 
