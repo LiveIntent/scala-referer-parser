@@ -27,6 +27,8 @@ import com.typesafe.sbt.site.SiteScaladocPlugin.autoImport.SiteScaladoc
 object BuildSettings {
 
   lazy val publishSettings = Seq[Setting[_]](
+    publishTo := Some("Artifactory Realm" at s"https://boomtrain.jfrog.io/artifactory/sbt"),
+    credentials += Credentials("Artifactory Realm", "liveintent.jfrog.io", "user", "password"),
     publishArtifact := true,
     Test / publishArtifact := false,
     pomIncludeRepository := { _ => false },
